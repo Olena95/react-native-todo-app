@@ -1,10 +1,15 @@
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
-import { StyleSheet, Text, View, Alert } from "react-native";
+import { useEffect, useState } from "react";
+import { StyleSheet, View, Alert } from "react-native";
+
 import Navbar from "./src/components/Navbar";
 import MainScreen from "./src/screens/MainScreen";
 import TodoScreen from "./src/screens/TodoScreen";
+
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 export default function App() {
+  const [isReady, setIsReady] = useState(false);
   const [todoId, setTodoId] = useState(null);
   const [todos, setTodos] = useState([
     // {
@@ -12,7 +17,23 @@ export default function App() {
     //   title: "test1",
     // },
   ]);
+  const [fontsLoaded] = useFonts({
+    "roboto-regular": require("./assets/fonts/Roboto-Regular.ttf"),
+    "roboto-bold": require("./assets/fonts/Roboto-Bold.ttf"),
+  });
 
+  useEffect(() => {
+    async function prepare() {
+      await SplashScreen.preventAutoHideAsync();
+    }
+    prepare();
+  }, []);
+
+  if (!fontsLoaded) {
+    return undefined;
+  } else {
+    SplashScreen.hideAsync();
+  }
   const addTodo = (title) => {
     const newTodo = {
       id: Date.now().toString(),
